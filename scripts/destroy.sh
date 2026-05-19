@@ -26,7 +26,7 @@ terraform init -input=false \
   -backend-config="bucket=twin-terraform-state-${ACCT_ID}" \
   -backend-config="key=${PROJECT_NAME}/terraform.tfstate" \
   -backend-config="region=${DEFAULT_AWS_REGION:-ap-south-1}" \
-  -backend-config="dynamodb_table=twin-terraform-locks"
+  -backend-config="use_lockfile=true"
 
 # Check if workspace exists
 if ! terraform workspace list | grep -q "$ENVIRONMENT"; then
@@ -65,6 +65,13 @@ else
 fi
 
 echo "🔥 Running terraform destroy..."
+
+# Create dummy Lambda zip if it doesn't exist (Terraform evaluates filebase64sha256 even on destroy)
+if [ ! -f "../backend/lambda-deployment.zip" ]; then
+    echo "  Creating placeholder lambda-deployment.zip for Terraform..."
+    mkdir -p ../backend
+    echo "placeholder" | zip -q ../backend/lambda-deployment.zip -
+fi
 
 # Run terraform destroy with auto-approve
 if [ "$ENVIRONMENT" = "prod" ] && [ -f "prod.tfvars" ]; then
