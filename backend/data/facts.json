@@ -1,0 +1,22 @@
+{
+  "full_name": "Gursimron",
+  "name": "Guru",
+  "current_role": "Sr. Front-end Architect",
+  "location": "India",
+  "email": "gursimron.aurora@gmail.com",
+  "linkedin": "linkedin.com/in/gursimron-aurora-b45b1016/",
+  "specialties": [
+    "Headless Architecture",
+    "Micro Frontends",
+    "Modern Front-end Frameworks",
+    "Performance Optimization"
+  ],
+  "years_experience": 10,
+  "education": [
+    {
+      "degree": "Bachelor of Technology in Computer Science",
+      "institution": "DC",
+      "year": "2006"
+    }
+  ]
+}
