@@ -15,7 +15,11 @@ echo "📦 Building Lambda package..."
 
 # 2. Terraform workspace & apply
 cd terraform
-terraform init -input=false
+terraform init -input=false \
+  -backend-config="bucket=twin-terraform-state-${AWS_ACCOUNT_ID:-$(aws sts get-caller-identity --query Account --output text)}" \
+  -backend-config="key=${PROJECT_NAME}/terraform.tfstate" \
+  -backend-config="region=${DEFAULT_AWS_REGION:-ap-south-1}" \
+  -backend-config="dynamodb_table=twin-terraform-locks"
 
 if ! terraform workspace list | grep -q "$ENVIRONMENT"; then
   terraform workspace new "$ENVIRONMENT"

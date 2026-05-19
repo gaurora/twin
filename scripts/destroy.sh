@@ -18,6 +18,16 @@ echo "🗑️ Preparing to destroy ${PROJECT_NAME}-${ENVIRONMENT} infrastructure
 # Navigate to terraform directory
 cd "$(dirname "$0")/../terraform"
 
+export PATH="$HOME/.local/bin:$PATH"
+
+# Initialize Terraform with S3 backend
+ACCT_ID=${AWS_ACCOUNT_ID:-$(aws sts get-caller-identity --query Account --output text)}
+terraform init -input=false \
+  -backend-config="bucket=twin-terraform-state-${ACCT_ID}" \
+  -backend-config="key=${PROJECT_NAME}/terraform.tfstate" \
+  -backend-config="region=${DEFAULT_AWS_REGION:-ap-south-1}" \
+  -backend-config="dynamodb_table=twin-terraform-locks"
+
 # Check if workspace exists
 if ! terraform workspace list | grep -q "$ENVIRONMENT"; then
     echo "❌ Error: Workspace '$ENVIRONMENT' does not exist"
